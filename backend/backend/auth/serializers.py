@@ -31,15 +31,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'password', 'is_staff', 'is_superuser', "is_active"]
 
-    def validate(self, attrs):
-        username = attrs('username', None)
-        email = attrs('email', None)
-        if username is None:
-            raise TypeError('Users must have a username.')
-        if email is None:
-            raise TypeError('Users must have an email.')
-        return attrs
-
     def create(self, validated_data):
         try:
             user = User.objects.get(email=validated_data['email'])
