@@ -6,3 +6,4 @@ gunicorn
 Pillow
 django-phonenumber-field
 phonenumbers
+django-sslserver

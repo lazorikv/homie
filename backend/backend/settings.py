@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'backend',
     'backend.user',
     'api',
+    "sslserver",
 ]
 
 MIDDLEWARE = [
