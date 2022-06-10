@@ -25,11 +25,11 @@ jobs:
         env:
             AWS_PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}
             HOSTNAME : ${{ secrets.HOSTNAME  }}
-            USER_NAME : ${{ secrets.USER_NAME  }}
+            USER_NAME : ${{ secrets.USERNAME  }}
             
         run: |
           echo "AWS_PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -i private_key ${USER_NAME}@${HOSTNAME} '
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
           
             #Now we have got the access of EC2 and we will start the deploy .
             cd /home/ubuntu/homie &&
