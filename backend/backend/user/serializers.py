@@ -5,7 +5,7 @@ from backend.user.models import User
 class UserSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField()
-
+    print("user")
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'password', 'is_staff', 'is_superuser', "is_active"]
