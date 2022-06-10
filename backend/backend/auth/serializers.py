@@ -35,7 +35,10 @@ class RegisterSerializer(serializers.ModelSerializer):
         try:
             user = User.objects.get(email=validated_data['email'])
         except ObjectDoesNotExist:
-            user = User.objects.create_user(**validated_data)
+            if validated_data.get("is_superuser") is True:
+                user = User.objects.create_superuser(**validated_data)
+            else:
+                user = User.objects.create_user(**validated_data)
         return user
 
 
