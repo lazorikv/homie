@@ -4,8 +4,6 @@ from backend.user.models import User
 
 class UserSerializer(serializers.ModelSerializer):
 
-    id = serializers.IntegerField()
-
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'password', 'is_staff', 'is_superuser', "is_active"]
@@ -38,3 +36,11 @@ class UserGetSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'password', 'is_staff', 'is_superuser', "is_active"]
 
+
+class UserCutSerializer(serializers.ModelSerializer):
+
+    id = serializers.IntegerField()
+
+    class Meta:
+        model = User
+        fields = ["id"]

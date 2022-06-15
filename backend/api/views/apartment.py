@@ -1,10 +1,12 @@
 from rest_framework import viewsets
+from rest_framework.parsers import FileUploadParser, MultiPartParser
 from system.models import Apartment
 from ..serializers.apartment import ApartmentWriteSerializer, ApartmentGetSerializer, ApartmentPatchSerializer
 
 
 class ApartmentViewSet(viewsets.ModelViewSet):
 
+    parser_classes = [MultiPartParser]
     queryset = Apartment.objects.all()
     serializer_class = ApartmentGetSerializer
 
