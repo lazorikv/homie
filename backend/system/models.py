@@ -67,8 +67,14 @@ class UtilityBills(models.Model):
 
 
 class Contract(models.Model):
-    contract_file = models.URLField(unique=True)
     is_active = models.BooleanField(default=False)
     owner = models.ForeignKey(Landlord, on_delete=models.CASCADE, related_name='landlord_contract')
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='tenant_contract')
     apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name='contract')
+
+
+class ContractFile(models.Model):
+    url = models.URLField(unique=True)
+    file_hash = models.CharField(max_length=100)
+    file_name = models.CharField(max_length=200, null=True)
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name="contract_file")
