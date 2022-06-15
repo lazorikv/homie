@@ -36,8 +36,8 @@ INSTALLED_APPS = [
     'backend.user',
     'api',
 ]
-if os.environ.get("STAGING") in ("1",):
-    INSTALLED_APPS.append("sslserver")
+# if os.environ.get("STAGING") in ("1",):
+#     INSTALLED_APPS.append("sslserver")
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
