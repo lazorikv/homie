@@ -1,7 +1,7 @@
 from rest_framework.routers import SimpleRouter
 from backend.user.views import UserViewSet
 from backend.auth.views import LoginViewSet, RegistrationViewSet, RefreshViewSet, ChangePasswordView
-from api.views import address, tenant, landlord, apartment, contract, utilitybills, contractfile
+from api.views import address, tenant, landlord, apartment, contract, utilitybills, contractfile, apartmentimages
 
 routes = SimpleRouter()
 
@@ -35,6 +35,12 @@ routes.register(r"utilitybills", utilitybills.UtilityBillsViewSet, basename='uti
 
 # CONTRACT FILE
 routes.register(r"contractfile", contractfile.ContractFileViewSet, basename='contractfile')
+
+# APARTMENT IMAGES
+routes.register(r"apartmentimage", apartmentimages.ApartmentPhotoViewSet, basename='apartmentimage')
+
+# APARTMENT HIDDEN IMAGES
+routes.register(r"apartmenthiddenimage", apartmentimages.ApartmentHiddenPhotoViewSet, basename='apartmenthiddenimage')
 
 urlpatterns = [
     *routes.urls

@@ -8,3 +8,4 @@ django-phonenumber-field
 phonenumbers
 django-sslserver
 boto3
+Pillow

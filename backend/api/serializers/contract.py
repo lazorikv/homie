@@ -1,9 +1,9 @@
 import datetime
 import boto3
 from rest_framework import serializers
-from system.models import Landlord, Tenant, Apartment, Contract, ContractFile
+from system.models import Landlord, Tenant, Apartment, Contract, ContractFile, ApartmentHiddenPhoto
 from backend import settings
-from ..serializers.contractfile import ContractFileGetSerializer, ContractFileCutSerializer
+from ..serializers.contractfile import ContractFileGetSerializer
 from ..serializers import tenant, apartment, landlord
 from api.utils import upload_file
 
@@ -13,10 +13,11 @@ class ContractWriteSerializer(serializers.ModelSerializer):
     tenant = tenant.TenantCutSerializer()
     owner = landlord.LandlordCutSerializer()
     apartment = apartment.ApartmentForOtherSerializer()
+    apartment_hidden_images = serializers.FileField()
 
     class Meta:
         model = Contract
-        fields = ["id", "contract_file", "is_active", "owner", "tenant", "apartment"]
+        fields = ["id", "contract_file", "is_active", "owner", "tenant", "apartment", "apartment_hidden_images"]
 
     def create(self, validated_data):
         tenant_data = validated_data.pop("tenant", None)
@@ -26,13 +27,26 @@ class ContractWriteSerializer(serializers.ModelSerializer):
         apartment_data = validated_data.pop("apartment", None)
         apartment = Apartment.objects.get(id=apartment_data["id"])
         file_data = validated_data.pop("contract_file", None)
+        images_data = validated_data.pop("apartment_hidden_images", None)
+        bucket_name = settings.BUCKET_NAME
         contract = Contract.objects.create(tenant=tenant, owner=landlord, apartment=apartment, **validated_data)
+        if images_data:
+            for image in images_data:
+                object_name = str(image.name).replace(" ", "") + str(datetime.datetime.now().strftime('%H_%M_%S'))
+                upload_data = upload_file(path=str(image.file.name), bucket=bucket_name,
+                                          object_name="apartment_images/" + object_name)
+                if not upload_data:
+                    raise ValueError("Error with upload file to s3")
+                url = "https://homieproject.s3.amazonaws.com/apartment_hidden_images/" + object_name
+                image = ApartmentHiddenPhoto.objects.create(url=url, contract=contract, image_name=object_name)
+                image.save()
         if not file_data:
             raise ValueError("File is not attached")
         file_hash = hash(file_data)
-        bucket_name = settings.BUCKET_NAME
+
         object_name = str(file_data.name).replace(" ", "") + str(datetime.datetime.now().strftime('%H_%M_%S'))
-        upload_data = upload_file(path=str(file_data.file.name), bucket=bucket_name, object_name=object_name)
+        upload_data = upload_file(path=str(file_data.file.name),
+                                  bucket=bucket_name, object_name="contracts/" + object_name)
         if not upload_data:
             raise ValueError("Error with upload file to s3")
         url = "https://homieproject.s3.amazonaws.com/contracts/" + object_name
@@ -51,7 +65,7 @@ class ContractGetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contract
-        fields = ["id", "contract_file", "is_active", "owner", "tenant", "apartment"]
+        fields = ["id", "contract_file", "is_active", "owner", "tenant", "apartment", "apartment_hidden_images"]
 
 
 class ContractPatchSerializer(serializers.ModelSerializer):
@@ -62,7 +76,7 @@ class ContractPatchSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contract
-        fields = ["id", "contract_file", "is_active", "owner", "tenant", "apartment"]
+        fields = ["id", "contract_file", "is_active", "owner", "tenant", "apartment", "apartment_hidden_images"]
 
     def update(self, instance, validated_data):
         # S3 bucket connection
@@ -77,14 +91,29 @@ class ContractPatchSerializer(serializers.ModelSerializer):
         apartment_data = validated_data.pop("apartment", None)
         apartment = Apartment.objects.get(id=apartment_data["id"])
         file_data = validated_data.pop("contract_file", None)
+        images_data = validated_data.pop("apartment_hidden_images", None)
         for (key, value) in validated_data.items():
             setattr(instance, key, value)
 
         bucket_name = settings.BUCKET_NAME
-
         old_file = ContractFile.objects.get(contract_id=instance.id)
         s3_client.delete_object(Bucket=bucket_name, Key='contracts/' + old_file.file_name)
         old_file.delete()
+        if images_data:
+            old_images = ApartmentHiddenPhoto.objects.filter(contract_id=instance.id)
+            for image in old_images:
+                s3_client.delete_object(Bucket=bucket_name, Key='apartment_hidden_image/' + image.image_name)
+            old_images.delete()
+            for image in images_data:
+                object_name = str(image.name).replace(" ", "") + str(datetime.datetime.now().strftime('%H_%M_%S'))
+                upload_data = upload_file(path=str(image.file.name), bucket=bucket_name,
+                                          object_name="apartment_images/" + object_name)
+                if not upload_data:
+                    raise ValueError("Error with upload file to s3")
+                url = "https://homieproject.s3.amazonaws.com/apartment_hidden_images/" + object_name
+                image = ApartmentHiddenPhoto.objects.create(url=url, contract=instance, image_name=object_name)
+                image.save()
+
         file_hash = hash(file_data)
         object_name = str(file_data.name).replace(" ", "") + str(datetime.datetime.now().strftime('%H_%M_%S'))
         upload_data = upload_file(path=str(file_data.file.name), bucket=bucket_name,

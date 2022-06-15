@@ -52,8 +52,6 @@ class Apartment(models.Model):
     room_count = models.IntegerField()
     area = models.FloatField()
     cost = models.DecimalField(max_digits=10, decimal_places=2)
-    photo = models.URLField(unique=True)
-    hidden_photo = models.URLField(unique=True)
     tenant = models.OneToOneField(Tenant, on_delete=models.SET_NULL, related_name='rent_apartment', null=True)
     owner = models.OneToOneField(Landlord, on_delete=models.SET_NULL, related_name='owned_apartment', null=True)
     address = models.OneToOneField(Address, on_delete=models.SET_NULL, related_name='apartment_address', null=True)
@@ -78,3 +76,16 @@ class ContractFile(models.Model):
     file_hash = models.CharField(max_length=100)
     file_name = models.CharField(max_length=200, null=True)
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name="contract_file")
+
+
+class ApartmentPhoto(models.Model):
+    url = models.URLField(unique=True)
+    image_name = models.CharField(max_length=200, null=True)
+    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name="apartment_images")
+
+
+class ApartmentHiddenPhoto(models.Model):
+    url = models.URLField(unique=True)
+    image_name = models.CharField(max_length=200, null=True)
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name="apartment_hidden_images")
+

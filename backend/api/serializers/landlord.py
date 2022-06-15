@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from system.models import Landlord
-from backend.user.serializers import UserSerializer
+from backend.user.serializers import UserSerializer, UserGetSerializer, UserCutSerializer
 from backend.user.models import User
 
 
 class LandlordWriteSerializer(serializers.ModelSerializer):
 
-    user = UserSerializer()
+    user = UserCutSerializer()
 
     class Meta:
         model = Landlord
