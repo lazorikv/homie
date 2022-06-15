@@ -1,7 +1,7 @@
 from rest_framework.routers import SimpleRouter
 from backend.user.views import UserViewSet
 from backend.auth.views import LoginViewSet, RegistrationViewSet, RefreshViewSet, ChangePasswordView
-from api.views import address, tenant, landlord, apartment, contract, utilitybills
+from api.views import address, tenant, landlord, apartment, contract, utilitybills, contractfile
 
 routes = SimpleRouter()
 
@@ -32,6 +32,9 @@ routes.register(r"contract", contract.ContractViewSet, basename='contract')
 
 # CONTRACT
 routes.register(r"utilitybills", utilitybills.UtilityBillsViewSet, basename='utilitybills')
+
+# CONTRACT FILE
+routes.register(r"contractfile", contractfile.ContractFileViewSet, basename='contractfile')
 
 urlpatterns = [
     *routes.urls

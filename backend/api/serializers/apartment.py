@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from system.models import Address, Apartment, Tenant, Landlord
-from ..serializers.tenant import TenantCutSerializer
+from ..serializers.tenant import TenantCutSerializer, TenantGetSerializer
 from ..serializers.address import AddressGetSerializer, AddressCutSerializer
-from ..serializers.landlord import LandlordCutSerializer
+from ..serializers.landlord import LandlordCutSerializer, LandlordGetSerializer
 
 
 class ApartmentWriteSerializer(serializers.ModelSerializer):
@@ -46,8 +46,8 @@ class ApartmentGetSerializer(serializers.ModelSerializer):
 
     photo = serializers.URLField()
     hidden_photo = serializers.URLField()
-    tenant = TenantCutSerializer()
-    owner = LandlordCutSerializer()
+    tenant = TenantGetSerializer()
+    owner = LandlordGetSerializer()
     address = AddressGetSerializer()
 
     class Meta:
@@ -103,3 +103,12 @@ class ApartmentPatchSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+class ApartmentForOtherSerializer(serializers.ModelSerializer):
+
+    id = serializers.IntegerField()
+
+    class Meta:
+        model = Apartment
+        fields = ["id"]
