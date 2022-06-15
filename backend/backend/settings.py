@@ -111,6 +111,10 @@ REST_FRAMEWORK = {
     )
 }
 
+FILE_UPLOAD_HANDLERS = [
+    'django.core.files.uploadhandler.TemporaryFileUploadHandler',
+]
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
@@ -131,3 +135,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+USER_ACCESS_ID = os.environ.get("user_access_id")
+USER_ACCESS_KEY = os.environ.get("user_secret")
+BUCKET_NAME = os.environ.get("bucket_name")
+REGION = os.environ.get("bucket_region")
