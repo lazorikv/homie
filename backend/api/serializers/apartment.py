@@ -1,8 +1,5 @@
 import datetime
-import io
-
 import boto3
-from PIL import Image
 from rest_framework import serializers
 from system.models import Address, Apartment, Tenant, Landlord, ApartmentPhoto
 from ..serializers.tenant import TenantCutSerializer, TenantGetSerializer
@@ -39,6 +36,7 @@ class ApartmentWriteSerializer(serializers.ModelSerializer):
         if not address_data:
             raise TypeError('Apartment must have relation to address.')
         address = Address.objects.get(id=address_data["id"])
+
         images_data = validated_data.pop("apartment_images", None)
         if not images_data:
             raise TypeError('Apartment must have images.')

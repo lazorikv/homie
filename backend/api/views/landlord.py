@@ -13,4 +13,4 @@ class LandlordViewSet(viewsets.ModelViewSet):
             return LandlordWriteSerializer
         elif self.request.method in ("PATCH",):
             return LandlordPatchSerializer
-        return LandlordGetSerializer
+        return self.serializer_class

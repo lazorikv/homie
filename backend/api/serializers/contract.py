@@ -4,6 +4,7 @@ from rest_framework import serializers
 from system.models import Landlord, Tenant, Apartment, Contract, ContractFile, ApartmentHiddenPhoto
 from backend import settings
 from ..serializers.contractfile import ContractFileGetSerializer
+from ..serializers.apartmentimages import ApartmentHiddenPhotoGetSerializer
 from ..serializers import tenant, apartment, landlord
 from api.utils import upload_file
 
@@ -13,7 +14,7 @@ class ContractWriteSerializer(serializers.ModelSerializer):
     tenant = tenant.TenantCutSerializer()
     owner = landlord.LandlordCutSerializer()
     apartment = apartment.ApartmentForOtherSerializer()
-    apartment_hidden_images = serializers.FileField()
+    apartment_hidden_images = serializers.ListField(write_only=True)
 
     class Meta:
         model = Contract
@@ -34,7 +35,7 @@ class ContractWriteSerializer(serializers.ModelSerializer):
             for image in images_data:
                 object_name = str(image.name).replace(" ", "") + str(datetime.datetime.now().strftime('%H_%M_%S'))
                 upload_data = upload_file(path=str(image.file.name), bucket=bucket_name,
-                                          object_name="apartment_images/" + object_name)
+                                          object_name="apartment_hidden_images/" + object_name)
                 if not upload_data:
                     raise ValueError("Error with upload file to s3")
                 url = "https://homieproject.s3.amazonaws.com/apartment_hidden_images/" + object_name
@@ -62,6 +63,7 @@ class ContractGetSerializer(serializers.ModelSerializer):
     tenant = tenant.TenantCutSerializer()
     owner = landlord.LandlordCutSerializer()
     apartment = apartment.ApartmentCutSerializer()
+    apartment_hidden_images = ApartmentHiddenPhotoGetSerializer(many=True)
 
     class Meta:
         model = Contract
@@ -73,6 +75,7 @@ class ContractPatchSerializer(serializers.ModelSerializer):
     tenant = tenant.TenantCutSerializer()
     owner = landlord.LandlordCutSerializer()
     apartment = apartment.ApartmentForOtherSerializer()
+    apartment_hidden_images = serializers.ListField(write_only=True)
 
     class Meta:
         model = Contract
@@ -107,7 +110,7 @@ class ContractPatchSerializer(serializers.ModelSerializer):
             for image in images_data:
                 object_name = str(image.name).replace(" ", "") + str(datetime.datetime.now().strftime('%H_%M_%S'))
                 upload_data = upload_file(path=str(image.file.name), bucket=bucket_name,
-                                          object_name="apartment_images/" + object_name)
+                                          object_name="apartment_hidden_images/" + object_name)
                 if not upload_data:
                     raise ValueError("Error with upload file to s3")
                 url = "https://homieproject.s3.amazonaws.com/apartment_hidden_images/" + object_name
