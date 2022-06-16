@@ -13,5 +13,5 @@ class TenantViewSet(viewsets.ModelViewSet):
             return TenantWriteSerializer
         elif self.request.method in ("PATCH",):
             return TenantPatchSerializer
-        return TenantGetSerializer
+        return self.serializer_class
 
