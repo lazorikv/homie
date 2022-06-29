@@ -33,9 +33,9 @@ jobs:
           
             #Now we have got the access of EC2 and we will start the deploy .
             cd /home/ubuntu/homie &&
-            git checkout master &&
+            git checkout dev &&
             git fetch --all &&
-            git reset --hard origin/master &&
-            git pull origin master &&
+            git reset --hard origin/dev&&
+            git pull origin dev &&
             docker-compose -f docker-compose.staging.yml up -d --build 
           '
