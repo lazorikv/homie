@@ -13,6 +13,9 @@ services:
       - ./.env.dev
     depends_on:
       - db
+      - elasticsearch
+    networks:
+      - elastic
   db:
     image: postgres:13.0-alpine
     volumes:
@@ -23,7 +26,21 @@ services:
       - POSTGRES_PASSWORD=homie
     ports:
       - 5432:5432
-
+    networks:
+      - elastic
+  elasticsearch:
+    image: elasticsearch:7.14.0
+    volumes:
+      - ./data/elastic:/var/lib/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+    networks:
+      - elastic
 volumes:
   db:
     driver: local
+networks:
+  elastic:
+    driver: bridge
