@@ -28,6 +28,14 @@ class Tenant(models.Model):
 
     REQUIRED_FIELDS = ['first_name', 'last_name', "phone_number", "middle_name"]
 
+    def gender_to_string(self):
+        if self.gender == 'MALE':
+            return 'Male'
+        elif self.gender == 'FEMALE':
+            return 'Female'
+        elif self.gender == 'UNDEFINED':
+            return 'Undefined'
+
 
 class Landlord(models.Model):
     Male = "MALE"
@@ -45,6 +53,14 @@ class Landlord(models.Model):
 
     class Meta:
         verbose_name = 'Landlord'
+
+    def gender_to_string(self):
+        if self.gender == 'MALE':
+            return 'Male'
+        elif self.gender == 'FEMALE':
+            return 'Female'
+        elif self.gender == 'UNDEFINED':
+            return 'Undefined'
 
 
 class Apartment(models.Model):

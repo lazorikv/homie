@@ -1,7 +1,9 @@
 from rest_framework.routers import SimpleRouter
+from django.urls import path, include
 from backend.user.views import UserViewSet
 from backend.auth.views import LoginViewSet, RegistrationViewSet, RefreshViewSet, ChangePasswordView
 from api.views import address, tenant, landlord, apartment, contract, utilitybills, contractfile, apartmentimages
+from search.views import UserDocumentView, LandlordDocumentView, TenantDocumentView, ApartmentDocumentView, AddressDocumentView
 
 routes = SimpleRouter()
 
@@ -42,6 +44,13 @@ routes.register(r"apartmentimage", apartmentimages.ApartmentPhotoViewSet, basena
 # APARTMENT HIDDEN IMAGES
 routes.register(r"apartmenthiddenimage", apartmentimages.ApartmentHiddenPhotoViewSet, basename='apartmenthiddenimage')
 
+# ELASTICSEARCH
+routes.register(r"search-user", UserDocumentView, basename='search-user')
+routes.register(r"search-landlord", LandlordDocumentView, basename='search-landlord')
+routes.register(r"search-tenant", TenantDocumentView, basename='search-tenant')
+routes.register(r"search-apartment", ApartmentDocumentView, basename='search-apartment')
+routes.register(r"search-address", AddressDocumentView, basename='search-address')
+
 urlpatterns = [
-    *routes.urls
+    *routes.urls,
 ]

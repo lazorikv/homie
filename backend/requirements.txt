@@ -8,4 +8,7 @@ django-phonenumber-field
 phonenumbers
 django-sslserver
 boto3
-Pillow
+elasticsearch
+elasticsearch-dsl
+django-elasticsearch-dsl
+django_elasticsearch_dsl_drf

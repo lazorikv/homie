@@ -30,11 +30,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_elasticsearch_dsl',
+    'django_elasticsearch_dsl_drf',
     'phonenumber_field',
     'system',
     'backend',
     'backend.user',
     'api',
+    'search.apps.SearchConfig',
 ]
 # if os.environ.get("STAGING") in ("1",):
 #     INSTALLED_APPS.append("sslserver")
@@ -108,12 +111,33 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
-    )
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 25
 }
 
 FILE_UPLOAD_HANDLERS = [
     'django.core.files.uploadhandler.TemporaryFileUploadHandler',
 ]
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'elasticsearch:9200'
+    },
+}
+
+ELASTICSEARCH_INDEX_NAMES = {
+    'backend_user.user': 'users',
+    'system.landlord': 'landlords',
+    'system.tenant': 'tenants',
+    'system.apartment': 'apartment'
+}
+
+
+GOOGLE_ADDRESS = {
+  'API_KEY': 'AIzaSyDT7cxpeKytgZcxFobRuMS6BFJHuc1r0Zg',
+  'API_LANGUAGE': 'en_US'
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
